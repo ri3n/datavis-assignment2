@@ -1,0 +1,5 @@
+"0","library(tidyverse)"
+"0","library(gt)"
+"0",""
+"0","results <- read_csv(""epl_results.csv"", show_col_types = FALSE)"
+"0","teams <- read_csv(""epl_teams.csv"", show_col_types = FALSE)"

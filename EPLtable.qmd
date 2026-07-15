@@ -1,0 +1,436 @@
+---
+title: "English Premier League Match Analysis"
+author: "Team 4"
+
+format:
+  html:
+    embed-resources: true
+    number-sections: true
+    toc: true
+    toc-depth: 2
+
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Introduction {.unnumbered}
+
+This report analyses the English Premier League match results using R, the **tidyverse** suite and the **gt** package. The first part generates the final league table based on total points, goal difference and goals scored. The second part proposes a **Home Advantage Index (HAI)** to quantify how much each team benefits from playing at home.
+
+The analysis uses match-level results from all 20 Premier League teams and presents the findings through ranked and professionally formatted tables.
+
+```{r}
+library(tidyverse)
+library(gt)
+
+results <- read_csv("epl_results.csv", show_col_types = FALSE)
+teams <- read_csv("epl_teams.csv", show_col_types = FALSE)
+```
+
+# EPL Match Analysis
+
+## Generating the League Table
+
+### Transforming the Match Results
+
+The original dataset stores match results in a wide format, where each away team is represented as a separate column. To simplify the analysis, the data is reshaped into a long format so that each row represents a single match between a home team and an away team.
+
+```{r}
+matches <- results |>
+  pivot_longer(
+    cols = -home_team,
+    names_to = "away_team",
+    values_to = "result"
+  ) |>
+  filter(result != "-")
+
+matches
+```
+
+## Separating Home and Away Goals
+
+Match results are initially stored as text in the format **home goals–away goals** (e.g., "3-2"). This step separates the score into two numerical columns, allowing the goals scored by each team to be analysed and compared.
+
+```{r}
+matches <- matches |>
+  separate_wider_delim(
+    result,
+    delim = "-",
+    names = c("home_goals", "away_goals")
+  ) |>
+  mutate(
+    home_goals = as.integer(home_goals),
+    away_goals = as.integer(away_goals)
+  )
+
+matches
+```
+
+## Calculating Team Results
+
+Each match is converted into two team-level records: one for the home team and one for the away team. Points are then awarded according to Premier League rules, where a win earns three points, a draw earns one point and a loss earns zero points.
+
+```{r}
+home_records <- matches |>
+  transmute(
+    team = home_team,
+    goals_scored = home_goals,
+    goals_conceded = away_goals,
+    points = case_when(
+      home_goals > away_goals ~ 3,
+      home_goals == away_goals ~ 1,
+      TRUE ~ 0
+    )
+  )
+
+away_records <- matches |>
+  transmute(
+    team = away_team,
+    goals_scored = away_goals,
+    goals_conceded = home_goals,
+    points = case_when(
+      away_goals > home_goals ~ 3,
+      away_goals == home_goals ~ 1,
+      TRUE ~ 0
+    )
+  )
+```
+
+```{r}
+team_records <- bind_rows(home_records, away_records)
+
+team_records
+```
+
+## Summarizing the League Results
+
+The individual match records are aggregated to calculate each team's season statistics, including total points, goals scored, goals conceded and goal difference. These values are then used to rank the teams according to the official Premier League standings.
+
+```{r}
+league_table <- team_records |>
+  mutate(
+    win = if_else(points == 3, 1, 0),
+    draw = if_else(points == 1, 1, 0),
+    loss = if_else(points == 0, 1, 0)
+  ) |>
+  group_by(team) |>
+  summarise(
+    MP = n(),
+    W = sum(win),
+    D = sum(draw),
+    L = sum(loss),
+    GF = sum(goals_scored),
+    GA = sum(goals_conceded),
+    GD = GF - GA,
+    Pts = sum(points),
+    .groups = "drop"
+  ) |>
+  left_join(
+    teams,
+    by = c("team" = "abbr")
+  ) |>
+  select(
+    Team = name,
+    MP,
+    W,
+    D,
+    L,
+    GF,
+    GA,
+    GD,
+    Pts
+  ) |>
+  arrange(
+    desc(Pts),
+    desc(GD),
+    desc(GF)
+  ) |>
+  mutate(
+    Pos = row_number()
+  ) |>
+  select(
+    Pos,
+    Team,
+    MP,
+    W,
+    D,
+    L,
+    GF,
+    GA,
+    GD,
+    Pts
+  )
+
+league_table
+```
+
+## Final League Table
+
+The final league table presents the ranked standings of all teams using a professionally formatted table. The top four teams are highlighted as Champions League qualifiers, while the bottom three teams are highlighted as the relegation zone.
+
+```{r}
+league_table |>
+  gt() |>
+  tab_header(
+    title = md("**English Premier League Final Table**"),
+    subtitle = "Ranked by points, then goal difference, then goals scored"
+  ) |>
+  cols_label(
+    Pos = "Pos",
+    Team = "Team",
+    MP = "MP",
+    W = "W",
+    D = "D",
+    L = "L",
+    GF = "GF",
+    GA = "GA",
+    GD = "GD",
+    Pts = "Pts"
+  ) |>
+  cols_align(
+    align = "left",
+    columns = Team
+  ) |>
+  cols_align(
+    align = "center",
+    columns = c(Pos, MP, W, D, L, GF, GA, GD, Pts)
+  ) |>
+  fmt_number(
+    columns = c(Pos, MP, W, D, L, GF, GA, GD, Pts),
+    decimals = 0
+  ) |>
+  fmt(
+    columns = GD,
+    fns = function(x) {
+      ifelse(x > 0, paste0("+", x), x)
+    }
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#1F4E78"),
+      cell_text(
+        color = "white",
+        weight = "bold"
+      )
+    ),
+    locations = cells_column_labels()
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#D9EAF7"),
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      rows = Pos <= 4
+    )
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#FCE8E6"),
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      rows = Pos >= 18
+    )
+  ) |>
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(
+      columns = Pts
+    )
+  ) |>
+  tab_style(
+    style = cell_borders(
+      sides = "bottom",
+      color = "#1F4E78",
+      weight = px(2)
+    ),
+    locations = cells_body(
+      rows = Pos == 4
+    )
+  ) |>
+  tab_style(
+    style = cell_borders(
+      sides = "top",
+      color = "#B22222",
+      weight = px(2)
+    ),
+    locations = cells_body(
+      rows = Pos == 18
+    )
+  ) |>
+  opt_row_striping() |>
+  opt_table_outline() |>
+  tab_options(
+    table.font.size = px(14),
+    heading.title.font.size = px(24),
+    heading.subtitle.font.size = px(14),
+    heading.align = "center",
+    column_labels.font.size = px(13),
+    row.striping.background_color = "#F7F7F7",
+    data_row.padding = px(7),
+    table.width = pct(100)
+  ) |>
+  tab_source_note(
+    source_note = md(
+      "**MP:** Matches Played · **W:** Wins · **D:** Draws · **L:** Losses ·  
+      **GF:** Goals Scored · **GA:** Goals Against · **GD:** Goal Difference · **Pts:** Points"
+    )
+  ) |>
+  tab_source_note(
+    source_note = md(
+      "**Blue:** Champions League qualification · **Red:** Relegation zone"
+    )
+  )
+```
+
+# Designing a Home Advantage Index
+
+## Metric Definition
+
+The Home Advantage Index measures how much better a team performs at home compared with away. It is calculated by subtracting away points per game from home points per game. A higher positive value indicates a stronger home advantage, while a value close to zero suggests similar performance at home and away. A negative value means the team earns more points per game away from home.
+
+```{r}
+home_performance <- matches |>
+  transmute(
+    team = home_team,
+    venue = "Home",
+    goals_scored = home_goals,
+    goals_conceded = away_goals,
+    points = case_when(
+      home_goals > away_goals ~ 3,
+      home_goals == away_goals ~ 1,
+      TRUE ~ 0
+    )
+  )
+
+away_performance <- matches |>
+  transmute(
+    team = away_team,
+    venue = "Away",
+    goals_scored = away_goals,
+    goals_conceded = home_goals,
+    points = case_when(
+      away_goals > home_goals ~ 3,
+      away_goals == home_goals ~ 1,
+      TRUE ~ 0
+    )
+  )
+
+venue_performance <- bind_rows(
+  home_performance,
+  away_performance
+)
+```
+
+## Calculating the Home Advantage Index
+
+> To calculate the Home Advantage Index (HAI), each team's home and away performances are analysed separately. The average points earned per game at home and away are calculated, and the difference between these two values is used as the HAI. A larger positive value indicates that a team performs significantly better when playing at home.
+
+```{r}
+home_advantage_table <- venue_performance |>
+  group_by(team, venue) |>
+  summarise(
+    games_played = n(),
+    total_points = sum(points),
+    points_per_game = total_points / games_played,
+    .groups = "drop"
+  ) |>
+  select(
+    team,
+    venue,
+    points_per_game
+  ) |>
+  pivot_wider(
+    names_from = venue,
+    values_from = points_per_game
+  ) |>
+  mutate(
+    metric_value = Home - Away
+  ) |>
+  left_join(
+    teams,
+    by = c("team" = "abbr")
+  ) |>
+  arrange(desc(metric_value)) |>
+  mutate(
+    metric_rank = row_number()
+  ) |>
+  transmute(
+  metric_rank,
+  team = name,
+  metric_value = round(metric_value, 2),
+  home_ppg = round(Home, 2),
+  away_ppg = round(Away, 2)
+  )
+
+home_advantage_table
+```
+
+The calculated HAI values are ranked from highest to lowest and presented in a formatted table. Additional columns showing home and away points per game are included to provide context and allow the results to be interpreted more easily.
+
+```{r}
+home_advantage_table |>
+  gt() |>
+  tab_header(
+    title = md("**Home Advantage Index Rankings**"),
+    subtitle = "Higher values indicate a stronger home advantage"
+  ) |>
+  cols_label(
+    metric_rank = "Rank",
+    team = "Team",
+    metric_value = "HAI",
+    home_ppg = "Home PPG",
+    away_ppg = "Away PPG"
+  ) |>
+  cols_align(
+    align = "center",
+    columns = c(metric_rank, metric_value, home_ppg, away_ppg)
+  ) |>
+  cols_align(
+    align = "left",
+    columns = team
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#1F4E78"),
+      cell_text(color = "white", weight = "bold")
+    ),
+    locations = cells_column_labels()
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = "#D9EAF7"),
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      rows = metric_rank <= 3
+    )
+  ) |>
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(
+      columns = metric_value
+    )
+  ) |>
+  data_color(
+    columns = metric_value,
+    palette = c("#FCE8E6", "#FFFFFF", "#D9EAF7")
+  ) |>
+  opt_row_striping() |>
+  tab_options(
+    table.width = pct(85),
+    heading.align = "center",
+    table.font.size = px(15),
+    data_row.padding = px(8)
+  ) |>
+  tab_source_note(
+    source_note = md(
+      "**HAI = Home Points per Game − Away Points per Game**"
+    )
+  )
+```
+
+The proposed Home Advantage Index provides a meaningful and interpretable measure of home advantage by comparing points earned per game at home and away. Unlike total points, points per game normalises performance across an equal number of fixtures, ensuring fair comparisons between teams. The results indicate that Tottenham Hotspur exhibits the strongest home advantage, while clubs with lower HAI values perform more consistently across venues. Using points per game rather than total points ensures the comparison remains fair and independent of league position, making the metric suitable for comparing teams with different overall strengths.
