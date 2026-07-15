@@ -7,7 +7,6 @@ website:
     left:
       - href: Task 2.qmd
         text: Task 2
-      - about.qmd
 
 format:
   html:
