@@ -5,7 +5,6 @@ title: "datavis-a2"
 ```{r setup}
 library(tidyverse)
 library(readxl)
-library(lubridate)
 library(tidyquant)
 ```
 
@@ -178,11 +177,11 @@ end_date <- "2026-06-30"
 
 monthly_btc <- tq_get(ticker_btc, from = start_date, to = end_date) |>
   drop_na(adjusted) |>
-  tq_transmute(select = adjusted, mutate_fun = to.monthly, indexAt = "lastof", OHLC = FALSE)
+  tq_transmute(select = adjusted, mutate_fun = to.monthly, indexAt = "lastof")
 
 monthly_gold <- tq_get(ticker_gold, from = start_date, to = end_date) |>
   drop_na(adjusted) |>
-  tq_transmute(select = adjusted, mutate_fun = to.monthly, indexAt = "lastof", OHLC = FALSE)
+  tq_transmute(select = adjusted, mutate_fun = to.monthly, indexAt = "lastof")
 
 head(monthly_btc, 10)
 head(monthly_gold, 10)
