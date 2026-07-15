@@ -5,23 +5,12 @@ title: "datavis-a2"
 ```{r setup}
 library(tidyverse)
 library(readxl)
-library(lubridate)
 library(tidyquant)
 ```
 
 # 2.1 DJIA Performance
 
 ## Import and clean the data (2%)
-
-**What we're doing, in plain terms:** the Excel file has a few junk rows at the
-top (title, "As of:" date, a blank row) before the real table starts. `skip = 5`
-just tells R "ignore the first 5 rows, row 6 is the real header." Think of it
-like skipping the cover page of a report before you start reading the content.
-
-We only want two columns out of the twelve in the file: the date, and the
-closing value. `transmute()` is like `mutate()`'s stricter sibling — it keeps
-ONLY the columns you name, dropping everything else. That's handy here because
-we don't want the DJIA total-return column, volume, etc.
 
 ```{r import-clean}
 raw_dj <- read_excel("dja-performance-report-monthly.xlsx", skip = 5)
@@ -37,15 +26,6 @@ head(monthly_dj, 10)
 ```
 
 ## Identify the gap months (3%)
-
-**Analogy:** imagine flipping through a photo album where a photo was taken
-every month. If you go from a June photo straight to a December photo, six
-months are missing — that's the "gap" we're hunting for.
-
-To find it programmatically: for every row, look at how many months until the
-*next* row's date. If that's more than 1, there's a gap starting right there.
-`lead()` peeks at the "next" value in a column (the opposite of `lag()`, which
-looks backward).
 
 ```{r identify-gap}
 monthly_dj_check <- monthly_dj |>
@@ -172,18 +152,17 @@ collapses each month's daily prices down to one row per month.
 
 ```{r import-btc-gold}
 ticker_btc <- "BTC-USD"
-ticker_gold <- "GC=F"
+ticker_gold <- "GC=F" # Make sure this ticker is correct for Gold
 start_date <- "2016-01-01"
 end_date <- "2026-06-30"
-
-monthly_btc <- tq_get(ticker_btc, from = start_date, to = end_date) |>
-  drop_na(adjusted) |>
-  tq_transmute(select = adjusted, mutate_fun = to.monthly, indexAt = "lastof", period = "months")
-
-monthly_gold <- tq_get(ticker_gold, from = start_date, to = end_date) |>
-  drop_na(adjusted) |>
-  tq_transmute(select = adjusted, mutate_fun = to.monthly, indexAt = "lastof", period = "months")
-
+# BTC Data
+monthly_btc <- tq_get(ticker_btc, from = start_date, to = end_date) %>%
+  drop_na(adjusted) %>%
+  tq_transmute(select = adjusted, mutate_fun = to.monthly, indexAt = "lastof")
+# Gold Data
+monthly_gold <- tq_get(ticker_gold, from = start_date, to = end_date) %>%
+  drop_na(adjusted) %>%
+  tq_transmute(select = adjusted, mutate_fun = to.monthly, indexAt = "lastof")
 head(monthly_btc, 10)
 head(monthly_gold, 10)
 ```
