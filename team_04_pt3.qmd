@@ -1,0 +1,62 @@
+---
+title: "Task 3: Visualising Singapore Tourist Spending"
+format: html
+---
+
+## Load Libraries (DELETE)
+```{r}
+library(tidyverse)
+```
+
+# Task 3: Visualising Singapore's Tourist Spending
+## Load Data
+```{r}
+sg_tourism_data <- read.csv('singapore_tourism_receipts.csv')
+```
+
+## Visualisation Process
+```{r}
+p <- ggplot(sg_tourism_data, aes(x = value/1000, y = quarter, fill = item)) +
+  geom_col(width = 0.8) +
+  scale_fill_manual(values = c(
+    'Sightseeing, Entertainment & Gaming'    = "#0B3D5C",
+    'Shopping'       = "#2E86AB",
+    'Other Components'          = "#E8CE5C",
+    'Food & Beverage'  = "#E68A1E",
+    'Accommodation'  = "#D64545"
+  )) +
+  geom_text(
+    aes(label = ifelse(value/1000 >= 2.5, sprintf("%.3f", value/1000), "")),
+    position = position_stack(vjust = 0.5),
+    size = 2,
+    color = "black"
+  ) +
+  guides(fill = guide_legend(nrow = 3, ncol = 2, byrow = FALSE)) +
+  theme(legend.position = "top",
+        legend.title = element_blank(),
+        legend.background = element_blank(),
+        legend.key.size = unit(0.25, "cm"),
+        plot.background = element_rect(fill = "#FDF3DE", color = NA),
+        panel.background = element_rect(fill = "white", color = NA),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank()
+        ) +
+  labs(
+    x = "Amount (Billion SGD)",
+    y = "Quarter",
+    title = "Singapore 2019-2024 Quarterly Tourism Receipts By Major Components",
+    caption = 'Source: singstat.gov.sg'
+  ) + 
+  annotate("rect", xmin = 0, xmax = 10, ymin = 4, ymax = 14, alpha = .25) +
+  annotate("text", x = 5, y = 10, label = "COVID-19 Pandemic") + 
+  annotate("rect", xmin = 0, xmax = 30, ymin = 15, ymax = 25, alpha = .25) +
+  annotate("text", x = 20, y = 21, label = "Tourism restrictions ease")
+p
+```
+
+## Data Interpretation
+During the COVID-19 pandemic, tourism numbers collapsed: 2021-Q1 shows the lowest total receipt (far below S\$1 billion, versus S\$8.026 billion for "Other Components" alone in 2019-Q4), reflecting Singapore's border closures.
+
+Recovery was rapid once the pandemic subsided and borders reopened. 2023-Q4 saw a total receipt of S\$27.155 billion, nearly matching pre-pandemic levels (S\$29.192 billion in 2019-Q4).
+
+Across all quarters, "Other Components" and "Sightseeing, Entertainment & Gaming" consistently form the largest shares, while "Food & Beverage" remains the smallest contributor (e.g. S\$3.192 billion in 2023-Q3 versus S$6.866 billion for "Other Components" that same quarter).
