@@ -2,12 +2,8 @@ project:
   type: website
 
 website:
-  title: "AAI1001 Data Engineering and Visualization "
-  navbar:
-    left:
-      - href: Task 2.qmd
-        text: Task 2
-
+  title: "AAI1001 Data Engineering and Visualization Assessment 3"
+    
 format:
   html:
     theme:
