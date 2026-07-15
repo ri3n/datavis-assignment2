@@ -28,10 +28,12 @@ head(monthly_dj, 10)
 
 ## Identify the gap months (3%)
 
-For every row, look at how many months until the
-*next* row's date. If that's more than 1, there's a gap starting right there.
-`lead()` peeks at the "next" value in a column (the opposite of `lag()`, which
-looks backward).
+**Historical reason:** The New York Stock Exchange closed for over
+four months (31 Jul–12 Dec 1914) at the outbreak of World War I, fearing
+foreign investors would dump U.S. securities and drain gold reserves. No
+trading meant no DJIA prices during that window, creating the gap in the
+data.
+
 
 ```{r}
 monthly_dj_check <- monthly_dj |>
@@ -52,12 +54,9 @@ gap_start
 ## Visualizing DJIA performance by month (10%)
 
 - `rel_change_pct`: "how much did this month's close change vs last month's,
-  in percent?" It's the classic `(new - old) / old * 100` formula. We use
-  `lag()` to grab "last month's" value.
+  in percent?"
 - `month_abb`: turns the numeric month (1–12) into "Jan", "Feb", ... and makes
-  it an **ordered factor**. Without ordering, R would sort months
-  alphabetically (Apr, Aug, Dec...) instead of calendar order — ordering fixes
-  that so your x-axis reads Jan→Dec.
+  it an **ordered factor**.
 
 ```{r}
 monthly_dj <- monthly_dj |>
@@ -95,18 +94,7 @@ ggplot(monthly_dj_clean, aes(x = month_abb, y = rel_change_pct)) +
   theme_minimal()
 ```
 
-*(The `coord_cartesian(ylim = ...)` line just zooms the y-axis in on the
-middle 98% of data so a few extreme historical crash months — like Oct
-1929 — don't squash everything else flat. It doesn't delete any data, it just
-changes the view, which is important since `coord_cartesian` — unlike
-`ylim()` — never drops points from the stats calculations.)*
-
 ### Visualization B: faceted frequency polygons + rug plot
-
-**Analogy:** a frequency polygon is just a histogram redrawn as a connected
-line instead of bars — easier to compare shapes across many small panels. A
-"rug plot" adds little tick marks along the bottom showing exactly where each
-individual data point sits, like tick marks on a ruler.
 
 `facet_wrap()` splits one big plot into a grid of small ones, one per group —
 here, one panel per month.
@@ -134,7 +122,7 @@ ggplot(monthly_dj_clean, aes(x = rel_change_pct)) +
 
 ## Import BTC and gold data (5%)
 
-mport the BTC and gold price data since 2016 using the tq_transmute() function from the tidyquant package, and create `monthly_btc` and `monthly_gold` tibbles
+Import the BTC and gold price data since 2016 using the tq_transmute() function from the tidyquant package, and create `monthly_btc` and `monthly_gold` tibbles
 
 ```{r}
 ticker_btc <- "BTC-USD"
@@ -215,10 +203,6 @@ ggplot(combined_indexed, aes(x = month, y = index_100, color = asset)) +
 
 ## Volatility analysis: largest monthly drawdown (10%)
 
-`cummax()`: Walks through the price vector and records
-"the highest price seen so far" at every point, then drawdown at each point = how far current price sits below
-that high-water mark.
-
 ```{r}
 compute_drawdown <- function(prices) {
   running_max <- cummax(prices)
@@ -276,22 +260,8 @@ drawdowns_dj
 drawdowns_btc
 ```
 
-**Writing your discussion paragraph:** once you run the chunk above, look at
-the printed `peak_date` / `trough_date` for each asset and match them to
-real events, e.g.:
+## Conclusion
 
-- DJIA's worst 2016–2026 drawdown very likely centers on the **Feb–Mar 2020
-  COVID-19 crash**.
-- Gold's largest drawdown in this window is a plausible candidate for the
-  **2022 Fed rate-hike cycle** (a stronger dollar and higher bond yields make
-  non-yielding gold less attractive).
-- BTC's largest drawdown is a plausible candidate for either the **Dec
-  2017–Dec 2018 "crypto winter"** or the **Nov 2021–Nov 2022** collapse
-  following the Terra/Luna and FTX failures.
+Gold recorded the smallest maximum drawdown (23.1%), falling from its peak in February 2026 to its trough in June 2026, indicating relatively stable price movements despite market uncertainty. The DJIA experienced a slightly larger drawdown (23.2%) between December 2019 and March 2020, corresponding to the global market crash triggered by the COVID-19 pandemic. Bitcoin suffered the largest drawdown (75.6%) from December 2017 to January 2019 during the cryptocurrency market downturn following the 2017 speculative bubble. Overall, the results support the hypothesis that volatility increases from Gold to DJIA and finally Bitcoin.
 
-Check your actual `peak_date`/`trough_date` output against these before
-writing your final paragraph — don't state a date you haven't verified from
-your own results. A ~100-word paragraph should: (1) state the three drawdown
-percentages in increasing order, (2) name the peak/trough months per asset,
-(3) link each to its real-world trigger, and (4) conclude whether the
-ordering (Gold < DJIA < BTC in volatility) supports the hypothesis.
+
