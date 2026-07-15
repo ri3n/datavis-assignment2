@@ -5,8 +5,8 @@ website:
   title: "AAI1001 Data Engineering and Visualization "
   navbar:
     left:
-      - href: index.qmd
-        text: Home
+      - href: Task 2.qmd
+        text: Task 2
       - about.qmd
 
 format:
@@ -16,6 +16,7 @@ format:
       - brand
     css: styles.css
     toc: true
+    embed-resources: true
 
 
 
