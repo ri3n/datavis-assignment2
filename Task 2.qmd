@@ -142,12 +142,13 @@ ticker_gold <- "GC=F"
 start_date <- "2016-01-01"
 end_date <- "2026-06-30"
 
-monthly_btc <- tq_get(ticker_btc, from = start_date, to = end_date) |>
-  drop_na(adjusted) |>
+# BTC Data
+monthly_btc <- tq_get(ticker_btc, from = start_date, to = end_date) %>%
+  drop_na(adjusted) %>%
   tq_transmute(select = adjusted, mutate_fun = to.monthly, indexAt = "lastof")
-
-monthly_gold <- tq_get(ticker_gold, from = start_date, to = end_date) |>
-  drop_na(adjusted) |>
+# Gold Data
+monthly_gold <- tq_get(ticker_gold, from = start_date, to = end_date) %>%
+  drop_na(adjusted) %>%
   tq_transmute(select = adjusted, mutate_fun = to.monthly, indexAt = "lastof")
 
 head(monthly_btc, 10)
