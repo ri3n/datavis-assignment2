@@ -1,0 +1,297 @@
+---
+title: "datavis-a2"
+---
+
+# 1. Setup libraries
+```{r}
+library(tidyverse)
+library(readxl)
+library(tidyquant)
+```
+
+# 2.1 DJIA Performance
+
+## Import and clean the data (2%)
+
+```{r}
+raw_dj <- read_excel("dja-performance-report-monthly.xlsx", skip = 5)
+
+monthly_dj <- raw_dj |>
+  filter(`Index Name` == "Dow Jones Industrial Average") |>
+  transmute(
+    date = as.Date(`Effective Date`, format = "%m/%d/%Y"),
+    close_value = as.numeric(`Close Value`)
+  )
+
+head(monthly_dj, 10)
+```
+
+## Identify the gap months (3%)
+
+For every row, look at how many months until the
+*next* row's date. If that's more than 1, there's a gap starting right there.
+`lead()` peeks at the "next" value in a column (the opposite of `lag()`, which
+looks backward).
+
+```{r}
+monthly_dj_check <- monthly_dj |>
+  arrange(date) |>
+  mutate(
+    month = month(date),
+    year = year(date),
+    months_to_next_row = interval(date, lead(date)) %/% months(1)
+  )
+
+# The gap(s): any row where more than 1 month passes before the next entry
+gap_start <- monthly_dj_check |>
+  filter(months_to_next_row > 1)
+
+gap_start
+```
+
+## Visualizing DJIA performance by month (10%)
+
+- `rel_change_pct`: "how much did this month's close change vs last month's,
+  in percent?" It's the classic `(new - old) / old * 100` formula. We use
+  `lag()` to grab "last month's" value.
+- `month_abb`: turns the numeric month (1–12) into "Jan", "Feb", ... and makes
+  it an **ordered factor**. Without ordering, R would sort months
+  alphabetically (Apr, Aug, Dec...) instead of calendar order — ordering fixes
+  that so your x-axis reads Jan→Dec.
+
+```{r}
+monthly_dj <- monthly_dj |>
+  arrange(date) |>
+  mutate(
+    rel_change_pct = (close_value / lag(close_value) - 1) * 100,
+    month_abb = factor(month.abb[month(date)], levels = month.abb, ordered = TRUE)
+  )
+
+head(monthly_dj, 10)
+```
+
+### Visualization A: violin + box plot, with a line connecting medians
+
+```{r viz-a}
+monthly_dj_clean <- monthly_dj |> drop_na(rel_change_pct)
+
+medians <- monthly_dj_clean |>
+  group_by(month_abb) |>
+  summarize(median_change = median(rel_change_pct), .groups = "drop")
+
+ggplot(monthly_dj_clean, aes(x = month_abb, y = rel_change_pct)) +
+  geom_violin(fill = "#a6cee3", color = "#1f78b4", trim = TRUE) +
+  geom_boxplot(width = 0.15, outlier.shape = NA, fill = "white") +
+  geom_line(data = medians, aes(x = month_abb, y = median_change, group = 1),
+            color = "firebrick", linewidth = 0.8) +
+  geom_point(data = medians, aes(x = month_abb, y = median_change),
+             color = "firebrick", size = 1.8) +
+  labs(
+    title = "DJIA Monthly Relative Change by Calendar Month",
+    subtitle = "Violin shows full distribution shape; box shows quartiles; red line tracks the median",
+    x = "Month", y = "Relative Change (%)"
+  ) +
+  coord_cartesian(ylim = quantile(monthly_dj_clean$rel_change_pct, c(0.01, 0.99))) +
+  theme_minimal()
+```
+
+*(The `coord_cartesian(ylim = ...)` line just zooms the y-axis in on the
+middle 98% of data so a few extreme historical crash months — like Oct
+1929 — don't squash everything else flat. It doesn't delete any data, it just
+changes the view, which is important since `coord_cartesian` — unlike
+`ylim()` — never drops points from the stats calculations.)*
+
+### Visualization B: faceted frequency polygons + rug plot
+
+**Analogy:** a frequency polygon is just a histogram redrawn as a connected
+line instead of bars — easier to compare shapes across many small panels. A
+"rug plot" adds little tick marks along the bottom showing exactly where each
+individual data point sits, like tick marks on a ruler.
+
+`facet_wrap()` splits one big plot into a grid of small ones, one per group —
+here, one panel per month.
+
+```{r viz-b}
+means <- monthly_dj_clean |>
+  group_by(month_abb) |>
+  summarize(mean_change = mean(rel_change_pct), .groups = "drop")
+
+ggplot(monthly_dj_clean, aes(x = rel_change_pct)) +
+  geom_freqpoly(bins = 30, color = "#1f78b4", linewidth = 0.7) +
+  geom_rug(sides = "b", alpha = 0.3, color = "#1f78b4") +
+  geom_vline(data = means, aes(xintercept = mean_change),
+             linetype = "dashed", color = "firebrick") +
+  facet_wrap(~ month_abb, nrow = 4, ncol = 3) +
+  labs(
+    title = "Distribution of DJIA Monthly Relative Change, by Month",
+    subtitle = "Dashed red line = mean change for that month",
+    x = "Relative Change (%)", y = "Count"
+  ) +
+  theme_minimal()
+```
+
+# 2.2 Comparing DJIA, BTC, and Gold Prices (25%)
+
+## Import BTC and gold data (5%)
+
+mport the BTC and gold price data since 2016 using the tq_transmute() function from the tidyquant package, and create `monthly_btc` and `monthly_gold` tibbles
+
+```{r}
+ticker_btc <- "BTC-USD"
+ticker_gold <- "GC=F"
+start_date <- "2016-01-01"
+end_date <- "2026-06-30"
+
+# BTC Data
+monthly_btc <- tq_get(ticker_btc, from = start_date, to = end_date) |>
+  drop_na(adjusted) |>
+  tq_transmute(select = adjusted, mutate_fun = to.monthly, indexAt = "lastof")
+# Gold Data
+monthly_gold <- tq_get(ticker_gold, from = start_date, to = end_date) |>
+  drop_na(adjusted) |>
+  tq_transmute(select = adjusted, mutate_fun = to.monthly, indexAt = "lastof")
+
+head(monthly_btc, 10)
+head(monthly_gold, 10)
+```
+
+## Combined visualization (10%)
+
+**Problem:** DJIA trades in tens of thousands, Gold in the
+thousands, and BTC swings from under $1,000 to over $60,000 across this
+period. Plot them raw on one chart and DJIA/BTC will flatten gold into an
+invisible line at the bottom — like putting an elephant, a dog, and a mouse
+on the same bathroom scale display.
+
+**Solution: Indexing:** Rescale every series so it starts at 100. Now
+we're not asking "what's the dollar price?" but "how much has this grown
+since Jan 2016?" — a fair comparison. We also use a log y-axis, since BTC's
+growth is multiplicative (10x, 100x) rather than additive, and log scales
+make percentage moves visually comparable regardless of the starting size.
+
+```{r}
+dj_long <- monthly_dj |>
+  filter(date >= as.Date(start_date)) |>
+  transmute(month = floor_date(date, "month"), close_value, asset = "DJIA")
+
+btc_long <- monthly_btc |>
+  transmute(month = floor_date(as.Date(date), "month"), close_value = adjusted, asset = "BTC")
+
+gold_long <- monthly_gold |>
+  transmute(month = floor_date(as.Date(date), "month"), close_value = adjusted, asset = "Gold")
+
+combined <- bind_rows(dj_long, btc_long, gold_long) |>
+  drop_na(close_value)
+
+# keep only the date range where ALL THREE assets have data
+range_by_asset <- combined |>
+  group_by(asset) |>
+  summarize(min_month = min(month), max_month = max(month), .groups = "drop")
+
+common_start <- max(range_by_asset$min_month)
+common_end <- min(range_by_asset$max_month)
+
+combined <- combined |>
+  filter(month >= common_start, month <= common_end)
+
+# index each series to 100 at the common start date
+combined_indexed <- combined |>
+  group_by(asset) |>
+  arrange(month) |>
+  mutate(index_100 = close_value / first(close_value) * 100) |>
+  ungroup()
+
+ggplot(combined_indexed, aes(x = month, y = index_100, color = asset)) +
+  geom_line(linewidth = 0.8) +
+  scale_y_log10() +
+  scale_color_manual(values = c(DJIA = "#1f78b4", BTC = "#e6550d", Gold = "#b15928")) +
+  labs(
+    title = "DJIA vs BTC vs Gold: Growth Since Jan 2016",
+    subtitle = "Indexed to 100 at start, log scale so % moves are visually comparable",
+    x = "Month", y = "Indexed Price (log scale, start = 100)", color = "Asset"
+  ) +
+  theme_minimal()
+```
+
+## Volatility analysis: largest monthly drawdown (10%)
+
+`cummax()`: Walks through the price vector and records
+"the highest price seen so far" at every point, then drawdown at each point = how far current price sits below
+that high-water mark.
+
+```{r}
+compute_drawdown <- function(prices) {
+  running_max <- cummax(prices)
+  drawdown_pct <- (prices - running_max) / running_max * 100
+  max_drawdown <- abs(min(drawdown_pct))
+  max_drawdown
+}
+
+# Sanity check: peak of 120 -> trough of 90 is the biggest fall = -25%...
+# wait, actually walk through it: 100 -> 60 (peak so far 100, DD -40%)
+#                                  60 -> 120 (new peak, DD 0%)
+#                                  120 -> 90 (peak 120, DD -25%)
+# so the worst drawdown in this vector is -40%, matching the expected answer.
+prices_test <- c(100, 60, 120, 90)
+compute_drawdown(prices_test)  # should print 40
+```
+
+Now we extend the function slightly so it also tells us *when* the peak and
+trough happened — useful for tying the numbers back to real events.
+
+```{r drawdown-details}
+compute_drawdown_details <- function(dates, prices) {
+  running_max <- cummax(prices)
+  drawdown_pct <- (prices - running_max) / running_max * 100
+  trough_idx <- which.min(drawdown_pct)
+  peak_idx <- max(which(prices[1:trough_idx] == running_max[trough_idx]))
+
+  tibble(
+    max_drawdown_pct = abs(drawdown_pct[trough_idx]),
+    peak_date = dates[peak_idx],
+    peak_price = prices[peak_idx],
+    trough_date = dates[trough_idx],
+    trough_price = prices[trough_idx]
+  )
+}
+
+dj_since_2016 <- monthly_dj |>
+  filter(date >= as.Date(start_date)) |>
+  arrange(date)
+
+drawdowns_dj <- compute_drawdown_details(dj_since_2016$date, dj_since_2016$close_value)
+drawdowns_gold <- compute_drawdown_details(as.Date(monthly_gold$date), monthly_gold$adjusted)
+drawdowns_btc <- compute_drawdown_details(as.Date(monthly_btc$date), monthly_btc$adjusted)
+
+biggest_drawdown_dj <- drawdowns_dj$max_drawdown_pct
+biggest_drawdown_gold <- drawdowns_gold$max_drawdown_pct
+biggest_drawdown_btc <- drawdowns_btc$max_drawdown_pct
+
+biggest_drawdown_gold
+biggest_drawdown_dj
+biggest_drawdown_btc
+
+drawdowns_gold
+drawdowns_dj
+drawdowns_btc
+```
+
+**Writing your discussion paragraph:** once you run the chunk above, look at
+the printed `peak_date` / `trough_date` for each asset and match them to
+real events, e.g.:
+
+- DJIA's worst 2016–2026 drawdown very likely centers on the **Feb–Mar 2020
+  COVID-19 crash**.
+- Gold's largest drawdown in this window is a plausible candidate for the
+  **2022 Fed rate-hike cycle** (a stronger dollar and higher bond yields make
+  non-yielding gold less attractive).
+- BTC's largest drawdown is a plausible candidate for either the **Dec
+  2017–Dec 2018 "crypto winter"** or the **Nov 2021–Nov 2022** collapse
+  following the Terra/Luna and FTX failures.
+
+Check your actual `peak_date`/`trough_date` output against these before
+writing your final paragraph — don't state a date you haven't verified from
+your own results. A ~100-word paragraph should: (1) state the three drawdown
+percentages in increasing order, (2) name the peak/trough months per asset,
+(3) link each to its real-world trigger, and (4) conclude whether the
+ordering (Gold < DJIA < BTC in volatility) supports the hypothesis.

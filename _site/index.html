@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>datavis-a2 – AAI1001 Data Engineering and Visualization</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a0f9fd0d421825b736dc1bbcbcba2219.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">AAI1001 Data Engineering and Visualization</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <span class="nav-link">
+<span class="menu-text">about.qmd</span>
+    </span>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#djia-performance" id="toc-djia-performance" class="nav-link active" data-scroll-target="#djia-performance">2.1 DJIA Performance</a>
+  <ul class="collapse">
+  <li><a href="#import-and-clean-the-data-2" id="toc-import-and-clean-the-data-2" class="nav-link" data-scroll-target="#import-and-clean-the-data-2">Import and clean the data (2%)</a></li>
+  <li><a href="#identify-the-gap-months-3" id="toc-identify-the-gap-months-3" class="nav-link" data-scroll-target="#identify-the-gap-months-3">Identify the gap months (3%)</a></li>
+  <li><a href="#visualizing-djia-performance-by-month-10" id="toc-visualizing-djia-performance-by-month-10" class="nav-link" data-scroll-target="#visualizing-djia-performance-by-month-10">Visualizing DJIA performance by month (10%)</a>
+  <ul class="collapse">
+  <li><a href="#visualization-a-violin-box-plot-with-a-line-connecting-medians" id="toc-visualization-a-violin-box-plot-with-a-line-connecting-medians" class="nav-link" data-scroll-target="#visualization-a-violin-box-plot-with-a-line-connecting-medians">Visualization A: violin + box plot, with a line connecting medians</a></li>
+  <li><a href="#visualization-b-faceted-frequency-polygons-rug-plot" id="toc-visualization-b-faceted-frequency-polygons-rug-plot" class="nav-link" data-scroll-target="#visualization-b-faceted-frequency-polygons-rug-plot">Visualization B: faceted frequency polygons + rug plot</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#comparing-djia-btc-and-gold-prices-25" id="toc-comparing-djia-btc-and-gold-prices-25" class="nav-link" data-scroll-target="#comparing-djia-btc-and-gold-prices-25">2.2 Comparing DJIA, BTC, and Gold Prices (25%)</a>
+  <ul class="collapse">
+  <li><a href="#import-btc-and-gold-data-5" id="toc-import-btc-and-gold-data-5" class="nav-link" data-scroll-target="#import-btc-and-gold-data-5">Import BTC and gold data (5%)</a></li>
+  <li><a href="#combined-visualization-10" id="toc-combined-visualization-10" class="nav-link" data-scroll-target="#combined-visualization-10">Combined visualization (10%)</a></li>
+  <li><a href="#volatility-analysis-largest-monthly-drawdown-10" id="toc-volatility-analysis-largest-monthly-drawdown-10" class="nav-link" data-scroll-target="#volatility-analysis-largest-monthly-drawdown-10">Volatility analysis: largest monthly drawdown (10%)</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">datavis-a2</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.1     ✔ readr     2.2.0
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyquant)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tidyquant' was built under R version 4.6.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'quantmod':
+  method            from
+  as.zoo.data.frame zoo </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'xts' was built under R version 4.6.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'zoo' was built under R version 4.6.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'quantmod' was built under R version 4.6.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'TTR' was built under R version 4.6.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'PerformanceAnalytics' was built under R version 4.6.1</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyquant packages ─────────────────────── tidyquant 1.0.12 ──
+✔ PerformanceAnalytics 2.1.0      ✔ TTR                  0.24.4
+✔ quantmod             0.4.29     ✔ xts                  0.14.2
+── Conflicts ────────────────────────────────────────── tidyquant_conflicts() ──
+✖ zoo::as.Date()                 masks base::as.Date()
+✖ zoo::as.Date.numeric()         masks base::as.Date.numeric()
+✖ dplyr::filter()                masks stats::filter()
+✖ xts::first()                   masks dplyr::first()
+✖ dplyr::lag()                   masks stats::lag()
+✖ xts::last()                    masks dplyr::last()
+✖ PerformanceAnalytics::legend() masks graphics::legend()
+✖ quantmod::summary()            masks base::summary()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+</div>
+<section id="djia-performance" class="level1">
+<h1>2.1 DJIA Performance</h1>
+<section id="import-and-clean-the-data-2" class="level2">
+<h2 class="anchored" data-anchor-id="import-and-clean-the-data-2">Import and clean the data (2%)</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>raw_dj <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"dja-performance-report-monthly.xlsx"</span>, <span class="at">skip =</span> <span class="dv">5</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>monthly_dj <span class="ot">&lt;-</span> raw_dj <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Index Name</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Dow Jones Industrial Average"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="st">`</span><span class="at">Effective Date</span><span class="st">`</span>, <span class="at">format =</span> <span class="st">"%m/%d/%Y"</span>),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">close_value =</span> <span class="fu">as.numeric</span>(<span class="st">`</span><span class="at">Close Value</span><span class="st">`</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(monthly_dj, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   date       close_value
+   &lt;date&gt;           &lt;dbl&gt;
+ 1 1896-05-29        40.6
+ 2 1896-06-30        36.2
+ 3 1896-07-31        32.0
+ 4 1896-08-31        32.0
+ 5 1896-09-30        36.0
+ 6 1896-10-31        39.5
+ 7 1896-11-30        41  
+ 8 1896-12-31        40.4
+ 9 1897-01-30        42.6
+10 1897-02-27        41.7</code></pre>
+</div>
+</div>
+</section>
+<section id="identify-the-gap-months-3" class="level2">
+<h2 class="anchored" data-anchor-id="identify-the-gap-months-3">Identify the gap months (3%)</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>monthly_dj_check <span class="ot">&lt;-</span> monthly_dj <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">month =</span> <span class="fu">month</span>(date),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">year</span>(date),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">months_to_next_row =</span> <span class="fu">interval</span>(date, <span class="fu">lead</span>(date)) <span class="sc">%/%</span> <span class="fu">months</span>(<span class="dv">1</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># The gap(s): any row where more than 1 month passes before the next entry</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>gap_start <span class="ot">&lt;-</span> monthly_dj_check <span class="sc">|&gt;</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(months_to_next_row <span class="sc">&gt;</span> <span class="dv">1</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>gap_start</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  date       close_value month  year months_to_next_row
+  &lt;date&gt;           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;              &lt;dbl&gt;
+1 1914-07-30        71.4     7  1914                  5</code></pre>
+</div>
+</div>
+<p>Running this on your actual file turns up exactly <strong>one</strong> gap: the row for <strong>30 Jul 1914</strong> jumps straight to <strong>31 Dec 1914</strong> (5 months skipped).</p>
+<p><strong>Historical reason (49 words):</strong> The New York Stock Exchange closed for over four months (31 Jul–12 Dec 1914) at the outbreak of World War I, fearing foreign investors would dump U.S. securities and drain gold reserves. No trading meant no DJIA prices during that window, creating the gap in the data.</p>
+</section>
+<section id="visualizing-djia-performance-by-month-10" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-djia-performance-by-month-10">Visualizing DJIA performance by month (10%)</h2>
+<p><strong>Two new columns, explained simply:</strong></p>
+<ul>
+<li><code>rel_change_pct</code>: “how much did this month’s close change vs last month’s, in percent?” It’s the classic <code>(new - old) / old * 100</code> formula. We use <code>lag()</code> to grab “last month’s” value.</li>
+<li><code>month_abb</code>: turns the numeric month (1–12) into “Jan”, “Feb”, … and makes it an <strong>ordered factor</strong>. Without ordering, R would sort months alphabetically (Apr, Aug, Dec…) instead of calendar order — ordering fixes that so your x-axis reads Jan→Dec.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>monthly_dj <span class="ot">&lt;-</span> monthly_dj <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rel_change_pct =</span> (close_value <span class="sc">/</span> <span class="fu">lag</span>(close_value) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">month_abb =</span> <span class="fu">factor</span>(month.abb[<span class="fu">month</span>(date)], <span class="at">levels =</span> month.abb, <span class="at">ordered =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(monthly_dj, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 4
+   date       close_value rel_change_pct month_abb
+   &lt;date&gt;           &lt;dbl&gt;          &lt;dbl&gt; &lt;ord&gt;    
+ 1 1896-05-29        40.6         NA     May      
+ 2 1896-06-30        36.2        -11.0   Jun      
+ 3 1896-07-31        32.0        -11.4   Jul      
+ 4 1896-08-31        32.0         -0.156 Aug      
+ 5 1896-09-30        36.0         12.8   Sep      
+ 6 1896-10-31        39.5          9.65  Oct      
+ 7 1896-11-30        41            3.72  Nov      
+ 8 1896-12-31        40.4         -1.34  Dec      
+ 9 1897-01-30        42.6          5.22  Jan      
+10 1897-02-27        41.7         -2.00  Feb      </code></pre>
+</div>
+</div>
+<section id="visualization-a-violin-box-plot-with-a-line-connecting-medians" class="level3">
+<h3 class="anchored" data-anchor-id="visualization-a-violin-box-plot-with-a-line-connecting-medians">Visualization A: violin + box plot, with a line connecting medians</h3>
+<p><strong>Analogy:</strong> a violin plot is like a boxplot that got its shape traced out — instead of just a box, you see the full “silhouette” of how the data is distributed (fat where there’s lots of data, thin where there’s little). We layer a slim boxplot <em>inside</em> the violin (like a box tucked inside its own shadow) by giving it a narrow <code>width</code>, so it stays within the violin’s outline.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>monthly_dj_clean <span class="ot">&lt;-</span> monthly_dj <span class="sc">|&gt;</span> <span class="fu">drop_na</span>(rel_change_pct)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>medians <span class="ot">&lt;-</span> monthly_dj_clean <span class="sc">|&gt;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month_abb) <span class="sc">|&gt;</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">median_change =</span> <span class="fu">median</span>(rel_change_pct), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(monthly_dj_clean, <span class="fu">aes</span>(<span class="at">x =</span> month_abb, <span class="at">y =</span> rel_change_pct)) <span class="sc">+</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="at">fill =</span> <span class="st">"#a6cee3"</span>, <span class="at">color =</span> <span class="st">"#1f78b4"</span>, <span class="at">trim =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width =</span> <span class="fl">0.15</span>, <span class="at">outlier.shape =</span> <span class="cn">NA</span>, <span class="at">fill =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> medians, <span class="fu">aes</span>(<span class="at">x =</span> month_abb, <span class="at">y =</span> median_change, <span class="at">group =</span> <span class="dv">1</span>),</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"firebrick"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> medians, <span class="fu">aes</span>(<span class="at">x =</span> month_abb, <span class="at">y =</span> median_change),</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">"firebrick"</span>, <span class="at">size =</span> <span class="fl">1.8</span>) <span class="sc">+</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"DJIA Monthly Relative Change by Calendar Month"</span>,</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Violin shows full distribution shape; box shows quartiles; red line tracks the median"</span>,</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Month"</span>, <span class="at">y =</span> <span class="st">"Relative Change (%)"</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">quantile</span>(monthly_dj_clean<span class="sc">$</span>rel_change_pct, <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.99</span>))) <span class="sc">+</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/viz-a-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>(The <code>coord_cartesian(ylim = ...)</code> line just zooms the y-axis in on the middle 98% of data so a few extreme historical crash months — like Oct 1929 — don’t squash everything else flat. It doesn’t delete any data, it just changes the view, which is important since <code>coord_cartesian</code> — unlike <code>ylim()</code> — never drops points from the stats calculations.)</em></p>
+</section>
+<section id="visualization-b-faceted-frequency-polygons-rug-plot" class="level3">
+<h3 class="anchored" data-anchor-id="visualization-b-faceted-frequency-polygons-rug-plot">Visualization B: faceted frequency polygons + rug plot</h3>
+<p><strong>Analogy:</strong> a frequency polygon is just a histogram redrawn as a connected line instead of bars — easier to compare shapes across many small panels. A “rug plot” adds little tick marks along the bottom showing exactly where each individual data point sits, like tick marks on a ruler.</p>
+<p><code>facet_wrap()</code> splits one big plot into a grid of small ones, one per group — here, one panel per month.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> monthly_dj_clean <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(month_abb) <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_change =</span> <span class="fu">mean</span>(rel_change_pct), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(monthly_dj_clean, <span class="fu">aes</span>(<span class="at">x =</span> rel_change_pct)) <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_freqpoly</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">color =</span> <span class="st">"#1f78b4"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rug</span>(<span class="at">sides =</span> <span class="st">"b"</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">color =</span> <span class="st">"#1f78b4"</span>) <span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">data =</span> means, <span class="fu">aes</span>(<span class="at">xintercept =</span> mean_change),</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"firebrick"</span>) <span class="sc">+</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> month_abb, <span class="at">nrow =</span> <span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of DJIA Monthly Relative Change, by Month"</span>,</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Dashed red line = mean change for that month"</span>,</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Relative Change (%)"</span>, <span class="at">y =</span> <span class="st">"Count"</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/viz-b-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="comparing-djia-btc-and-gold-prices-25" class="level1">
+<h1>2.2 Comparing DJIA, BTC, and Gold Prices (25%)</h1>
+<section id="import-btc-and-gold-data-5" class="level2">
+<h2 class="anchored" data-anchor-id="import-btc-and-gold-data-5">Import BTC and gold data (5%)</h2>
+<p><strong>What <code>tq_transmute()</code> is doing, in plain terms:</strong> <code>tq_get()</code> downloads daily price data (like a spreadsheet download from Yahoo Finance). But we want <em>monthly</em> data, so <code>tq_transmute()</code> acts like a “summarizer” — <code>to.monthly</code> collapses each month’s daily prices down to one row per month.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ticker_btc <span class="ot">&lt;-</span> <span class="st">"BTC-USD"</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>ticker_gold <span class="ot">&lt;-</span> <span class="st">"GC=F"</span> <span class="co"># Make sure this ticker is correct for Gold</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>start_date <span class="ot">&lt;-</span> <span class="st">"2016-01-01"</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>end_date <span class="ot">&lt;-</span> <span class="st">"2026-06-30"</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># BTC Data</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>monthly_btc <span class="ot">&lt;-</span> <span class="fu">tq_get</span>(ticker_btc, <span class="at">from =</span> start_date, <span class="at">to =</span> end_date) <span class="sc">%&gt;%</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(adjusted) <span class="sc">%&gt;%</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tq_transmute</span>(<span class="at">select =</span> adjusted, <span class="at">mutate_fun =</span> to.monthly, <span class="at">indexAt =</span> <span class="st">"lastof"</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Gold Data</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>monthly_gold <span class="ot">&lt;-</span> <span class="fu">tq_get</span>(ticker_gold, <span class="at">from =</span> start_date, <span class="at">to =</span> end_date) <span class="sc">%&gt;%</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(adjusted) <span class="sc">%&gt;%</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tq_transmute</span>(<span class="at">select =</span> adjusted, <span class="at">mutate_fun =</span> to.monthly, <span class="at">indexAt =</span> <span class="st">"lastof"</span>)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(monthly_btc, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   date       adjusted
+   &lt;date&gt;        &lt;dbl&gt;
+ 1 2016-01-31     369.
+ 2 2016-02-29     438.
+ 3 2016-03-31     417.
+ 4 2016-04-30     448.
+ 5 2016-05-31     531.
+ 6 2016-06-30     673.
+ 7 2016-07-31     625.
+ 8 2016-08-31     575.
+ 9 2016-09-30     610.
+10 2016-10-31     701.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(monthly_gold, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   date       adjusted
+   &lt;date&gt;        &lt;dbl&gt;
+ 1 2016-01-31    1116.
+ 2 2016-02-29    1234.
+ 3 2016-03-31    1234.
+ 4 2016-04-30    1289.
+ 5 2016-05-31    1215.
+ 6 2016-06-30    1318.
+ 7 2016-07-31    1349 
+ 8 2016-08-31    1307.
+ 9 2016-09-30    1313.
+10 2016-10-31    1272.</code></pre>
+</div>
+</div>
+<p><em>Note: <code>to.monthly</code> (from the <code>xts</code>/<code>quantmod</code> package under the hood) will rename the value column — after running this, check <code>names(monthly_btc)</code> and <code>names(monthly_gold)</code>. It’s very likely still called <code>adjusted</code>, but if it became something like <code>adjusted.Adjusted</code>, just rename it back with <code>rename(adjusted = ...)</code> before moving on.</em></p>
+</section>
+<section id="combined-visualization-10" class="level2">
+<h2 class="anchored" data-anchor-id="combined-visualization-10">Combined visualization (10%)</h2>
+<p><strong>The problem:</strong> DJIA trades in the tens of thousands, gold in the thousands, and BTC swings from under $1,000 to over $60,000 across this period. Plot them raw on one chart and DJIA/BTC will flatten gold into an invisible line at the bottom — like putting an elephant, a dog, and a mouse on the same bathroom scale display.</p>
+<p><strong>The fix — indexing:</strong> we rescale every series so it starts at 100. Now we’re not asking “what’s the dollar price?” but “how much has this grown since Jan 2016?” — a fair comparison. We also use a log y-axis, since BTC’s growth is multiplicative (10x, 100x) rather than additive, and log scales make percentage moves visually comparable regardless of the starting size.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>dj_long <span class="ot">&lt;-</span> monthly_dj <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(start_date)) <span class="sc">|&gt;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">month =</span> <span class="fu">floor_date</span>(date, <span class="st">"month"</span>), close_value, <span class="at">asset =</span> <span class="st">"DJIA"</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>btc_long <span class="ot">&lt;-</span> monthly_btc <span class="sc">|&gt;</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">month =</span> <span class="fu">floor_date</span>(<span class="fu">as.Date</span>(date), <span class="st">"month"</span>), <span class="at">close_value =</span> adjusted, <span class="at">asset =</span> <span class="st">"BTC"</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>gold_long <span class="ot">&lt;-</span> monthly_gold <span class="sc">|&gt;</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">month =</span> <span class="fu">floor_date</span>(<span class="fu">as.Date</span>(date), <span class="st">"month"</span>), <span class="at">close_value =</span> adjusted, <span class="at">asset =</span> <span class="st">"Gold"</span>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>combined <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(dj_long, btc_long, gold_long) <span class="sc">|&gt;</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(close_value)</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="co"># keep only the date range where ALL THREE assets have data</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>range_by_asset <span class="ot">&lt;-</span> combined <span class="sc">|&gt;</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(asset) <span class="sc">|&gt;</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">min_month =</span> <span class="fu">min</span>(month), <span class="at">max_month =</span> <span class="fu">max</span>(month), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>common_start <span class="ot">&lt;-</span> <span class="fu">max</span>(range_by_asset<span class="sc">$</span>min_month)</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>common_end <span class="ot">&lt;-</span> <span class="fu">min</span>(range_by_asset<span class="sc">$</span>max_month)</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>combined <span class="ot">&lt;-</span> combined <span class="sc">|&gt;</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(month <span class="sc">&gt;=</span> common_start, month <span class="sc">&lt;=</span> common_end)</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a><span class="co"># index each series to 100 at the common start date</span></span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>combined_indexed <span class="ot">&lt;-</span> combined <span class="sc">|&gt;</span></span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(asset) <span class="sc">|&gt;</span></span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(month) <span class="sc">|&gt;</span></span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">index_100 =</span> close_value <span class="sc">/</span> <span class="fu">first</span>(close_value) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(combined_indexed, <span class="fu">aes</span>(<span class="at">x =</span> month, <span class="at">y =</span> index_100, <span class="at">color =</span> asset)) <span class="sc">+</span></span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="at">DJIA =</span> <span class="st">"#1f78b4"</span>, <span class="at">BTC =</span> <span class="st">"#e6550d"</span>, <span class="at">Gold =</span> <span class="st">"#b15928"</span>)) <span class="sc">+</span></span>
+<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"DJIA vs BTC vs Gold: Growth Since Jan 2016"</span>,</span>
+<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Indexed to 100 at start, log scale so % moves are visually comparable"</span>,</span>
+<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Month"</span>, <span class="at">y =</span> <span class="st">"Indexed Price (log scale, start = 100)"</span>, <span class="at">color =</span> <span class="st">"Asset"</span></span>
+<span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/combine-assets-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="volatility-analysis-largest-monthly-drawdown-10" class="level2">
+<h2 class="anchored" data-anchor-id="volatility-analysis-largest-monthly-drawdown-10">Volatility analysis: largest monthly drawdown (10%)</h2>
+<p><strong>What a “drawdown” is, with an analogy:</strong> imagine your bank balance over time. Your “peak” is the highest it’s ever been. A “drawdown” at any later point is how far below that peak you’ve fallen, as a percentage. The <em>maximum</em> drawdown is your worst fall from grace — the biggest peak-to-valley drop before it recovered to a new high.</p>
+<p><code>cummax()</code> is the key trick: it walks through the price vector and records “the highest price seen so far” at every point — like a high-water mark on a flood wall. Then drawdown at each point = how far current price sits below that high-water mark.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>compute_drawdown <span class="ot">&lt;-</span> <span class="cf">function</span>(prices) {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  running_max <span class="ot">&lt;-</span> <span class="fu">cummax</span>(prices)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  drawdown_pct <span class="ot">&lt;-</span> (prices <span class="sc">-</span> running_max) <span class="sc">/</span> running_max <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  max_drawdown <span class="ot">&lt;-</span> <span class="fu">abs</span>(<span class="fu">min</span>(drawdown_pct))</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  max_drawdown</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Sanity check: peak of 120 -&gt; trough of 90 is the biggest fall = -25%...</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># wait, actually walk through it: 100 -&gt; 60 (peak so far 100, DD -40%)</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co">#                                  60 -&gt; 120 (new peak, DD 0%)</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="co">#                                  120 -&gt; 90 (peak 120, DD -25%)</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co"># so the worst drawdown in this vector is -40%, matching the expected answer.</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>prices_test <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">60</span>, <span class="dv">120</span>, <span class="dv">90</span>)</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="fu">compute_drawdown</span>(prices_test)  <span class="co"># should print 40</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 40</code></pre>
+</div>
+</div>
+<p>Now we extend the function slightly so it also tells us <em>when</em> the peak and trough happened — useful for tying the numbers back to real events.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>compute_drawdown_details <span class="ot">&lt;-</span> <span class="cf">function</span>(dates, prices) {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  running_max <span class="ot">&lt;-</span> <span class="fu">cummax</span>(prices)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  drawdown_pct <span class="ot">&lt;-</span> (prices <span class="sc">-</span> running_max) <span class="sc">/</span> running_max <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  trough_idx <span class="ot">&lt;-</span> <span class="fu">which.min</span>(drawdown_pct)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  peak_idx <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">which</span>(prices[<span class="dv">1</span><span class="sc">:</span>trough_idx] <span class="sc">==</span> running_max[trough_idx]))</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_drawdown_pct =</span> <span class="fu">abs</span>(drawdown_pct[trough_idx]),</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">peak_date =</span> dates[peak_idx],</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">peak_price =</span> prices[peak_idx],</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">trough_date =</span> dates[trough_idx],</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">trough_price =</span> prices[trough_idx]</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>dj_since_2016 <span class="ot">&lt;-</span> monthly_dj <span class="sc">|&gt;</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(start_date)) <span class="sc">|&gt;</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date)</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>drawdowns_dj <span class="ot">&lt;-</span> <span class="fu">compute_drawdown_details</span>(dj_since_2016<span class="sc">$</span>date, dj_since_2016<span class="sc">$</span>close_value)</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>drawdowns_gold <span class="ot">&lt;-</span> <span class="fu">compute_drawdown_details</span>(<span class="fu">as.Date</span>(monthly_gold<span class="sc">$</span>date), monthly_gold<span class="sc">$</span>adjusted)</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>drawdowns_btc <span class="ot">&lt;-</span> <span class="fu">compute_drawdown_details</span>(<span class="fu">as.Date</span>(monthly_btc<span class="sc">$</span>date), monthly_btc<span class="sc">$</span>adjusted)</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>biggest_drawdown_dj <span class="ot">&lt;-</span> drawdowns_dj<span class="sc">$</span>max_drawdown_pct</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>biggest_drawdown_gold <span class="ot">&lt;-</span> drawdowns_gold<span class="sc">$</span>max_drawdown_pct</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>biggest_drawdown_btc <span class="ot">&lt;-</span> drawdowns_btc<span class="sc">$</span>max_drawdown_pct</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>biggest_drawdown_gold</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 23.09913</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>biggest_drawdown_dj</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 23.20127</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>biggest_drawdown_btc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 75.57435</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>drawdowns_gold</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  max_drawdown_pct peak_date  peak_price trough_date trough_price
+             &lt;dbl&gt; &lt;date&gt;          &lt;dbl&gt; &lt;date&gt;             &lt;dbl&gt;
+1             23.1 2026-02-28      5230. 2026-06-30         4022.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>drawdowns_dj</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  max_drawdown_pct peak_date  peak_price trough_date trough_price
+             &lt;dbl&gt; &lt;date&gt;          &lt;dbl&gt; &lt;date&gt;             &lt;dbl&gt;
+1             23.2 2019-12-31     28538. 2020-03-31        21917.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>drawdowns_btc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 5
+  max_drawdown_pct peak_date  peak_price trough_date trough_price
+             &lt;dbl&gt; &lt;date&gt;          &lt;dbl&gt; &lt;date&gt;             &lt;dbl&gt;
+1             75.6 2017-12-31     14156. 2019-01-31         3458.</code></pre>
+</div>
+</div>
+<p><strong>Writing your discussion paragraph:</strong> once you run the chunk above, look at the printed <code>peak_date</code> / <code>trough_date</code> for each asset and match them to real events, e.g.:</p>
+<ul>
+<li>DJIA’s worst 2016–2026 drawdown very likely centers on the <strong>Feb–Mar 2020 COVID-19 crash</strong>.</li>
+<li>Gold’s largest drawdown in this window is a plausible candidate for the <strong>2022 Fed rate-hike cycle</strong> (a stronger dollar and higher bond yields make non-yielding gold less attractive).</li>
+<li>BTC’s largest drawdown is a plausible candidate for either the <strong>Dec 2017–Dec 2018 “crypto winter”</strong> or the <strong>Nov 2021–Nov 2022</strong> collapse following the Terra/Luna and FTX failures.</li>
+</ul>
+<p>Check your actual <code>peak_date</code>/<code>trough_date</code> output against these before writing your final paragraph — don’t state a date you haven’t verified from your own results. A ~100-word paragraph should: (1) state the three drawdown percentages in increasing order, (2) name the peak/trough months per asset, (3) link each to its real-world trigger, and (4) conclude whether the ordering (Gold &lt; DJIA &lt; BTC in volatility) supports the hypothesis.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
